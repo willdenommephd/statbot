@@ -212,6 +212,16 @@ b.	For this prompt, you can answer either text or tables. For most cases, you ca
 
 These are the steps for which to manually configure StatBot to start the data extraction process. Afterwards, StatBot will begin to enter the URLs and extract the data. Details of this process are below. 
 
+##### Layout configuration
+By default, StatBot will apply the following layout to the data once extracted:
+- Geography is organized by row.
+- Middle filters are organized by row. 
+- Reference period is organized by column. 
+
+However, users can specify whether one or more middle filters can be organized into columns instead of rows. 
+1. Enter the names of any middle filters you want as columns (comma-separated, leave blank for all as rows): 
+- Specify the name of any middle filter, verbatim, that you wish to have its data organized by column instead of row. You can enter any number of middle filters. 
+
 #### Preset file filter configuration
 This filter configuration step is for when you wish to use a preset file to configure the filters automatically for StatBot. You specify that you wish to use a preset file and enter its path in Module 4 Step 1. Creating a preset file rather than using StatBot’s manual configuration option could streamline the process and reduce the risk of manual errors. 
 
