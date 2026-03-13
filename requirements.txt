@@ -1,0 +1,4 @@
+selenium
+openpyxl
+bs4
+webdriver_manager
