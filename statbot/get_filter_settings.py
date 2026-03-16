@@ -2,6 +2,27 @@ import sys
 import logging
 
 def get_filter_settings(update_mode=False):
+        """
+    Prompt the user to choose a data extraction type and validate the input.
+
+    This function interactively asks the user to enter a data type to extract
+    and continues prompting until a valid option is provided. Valid options are
+    ``"text"`` and ``"tables"`` (case-insensitive; surrounding whitespace is
+    ignored). The selected value is logged at INFO level; invalid entries are
+    logged at WARNING level.
+
+    Returns:
+        str: The validated data type, either ``"text"`` or ``"tables"``.
+
+    Side Effects:
+        - Reads from standard input via ``input()``.
+        - Writes log messages via the ``logging`` module.
+
+    Notes:
+        Because this function is interactive, it is best suited for CLI usage.
+        For non-interactive contexts (e.g., libraries, services, tests), consider
+        passing the data type as an argument instead of prompting.
+    """
     try:
         print("\n--- FIXED FILTER: Geography ---")
         geography_method = input("Enter method for Geography (keyword/bracket_number/level/level_all): ").strip().lower()
@@ -29,7 +50,7 @@ def get_filter_settings(update_mode=False):
                 'value': filter_value
             })
         
-        if update_mode:
+        if update_mode: #see update_excel_with_new_year.py to understand what this function is for. 
             print("\n--- ADD NEW YEAR ---")
             print("Note: Enter the EXACT text as it appears in the dropdown")
             print("Examples: '2024', '2024/2025', '2024-2025', 'Q4 2024', etc.")
