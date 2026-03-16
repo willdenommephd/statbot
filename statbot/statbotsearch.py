@@ -12,8 +12,47 @@ from .find_chromedriver import find_chromedriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 def statbotsearch(driver, search_term, file_path="output_links.txt", existing_driver=None):
-    """
-    This function takes a search term, navigates to the StatCan website, performs the search, and extracts the relevant data.
+        """
+    Search Statistics Canada (StatCan) data tables and save discovered table links to a text file.
+
+    This function uses Selenium to open StatCan's Data page, submit a keyword search, switch to
+    the "Tables" results tab, paginate through the results, collect unique table URLs (matching
+    `/t1/tbl1/en/`), and write them to `file_path` in a semicolon-delimited format:
+    `{url};{title};Sheet {i}`.
+
+    Parameters
+    ----------
+    driver : selenium.webdriver.remote.webdriver.WebDriver
+        A Selenium WebDriver reference. If `existing_driver` is provided, this argument is ignored
+        and the existing driver is used. If `existing_driver` is None, a Chrome driver may be
+        created internally.
+    search_term : str
+        The keyword(s) to search for on the StatCan site.
+    file_path : str, optional
+        Output path for the generated text file of table links. Defaults to "output_links.txt".
+    existing_driver : selenium.webdriver.remote.webdriver.WebDriver or None, optional
+        If provided, use this already-initialized WebDriver rather than creating a new one.
+
+    Returns
+    -------
+    None
+        Results are written to disk. The function currently does not return the collected links.
+
+    Side Effects
+    ------------
+    - Navigates a browser session to StatCan pages and interacts with the site.
+    - Writes (overwrites) `file_path`.
+    - May create and quit a Chrome WebDriver instance if `existing_driver` is not provided.
+
+    Notes
+    -----
+    The function attempts to locate Chrome/ChromeDriver locally via `find_chrome()` and
+    `find_chromedriver()`, falling back to `webdriver_manager` if needed. It includes basic
+    retries for stale elements and simple pagination via the "next" link.
+
+    Raises
+    ------
+    This function catches broad exceptions and prints errors rather than re-raising them.
     """
     _owns_driver = existing_driver is None
     if existing_driver is not None:
