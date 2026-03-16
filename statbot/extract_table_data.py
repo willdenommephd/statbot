@@ -256,19 +256,7 @@ def extract_table_data_single(driver, url, geography_method, geography_value, mi
         try:
             table = driver.find_element(By.ID, 'simpleTable')
             rows = table.find_elements(By.TAG_NAME, 'tr')
-            logging.info(f"Final table has {len(rows)} rows before extraction")
-            
-            # Debug: Save table HTML to file
-            table_html = table.get_attribute('outerHTML')
-            debug_file = 'debug_table.html'
-            with open(debug_file, 'w', encoding='utf-8') as f:
-                f.write(table_html)
-            logging.info(f"Saved table HTML to {debug_file} for inspection")
-            
-            # Also save full page source
-            with open('debug_page.html', 'w', encoding='utf-8') as f:
-                f.write(driver.page_source)
-            logging.info("Saved full page HTML to debug_page.html")
+            logging.info(f"Final table has {len(rows)} rows before extraction")          
         except Exception as e:
             logging.warning(f"Could not count final rows: {e}")
     
@@ -436,12 +424,12 @@ def extract_table_data_single(driver, url, geography_method, geography_value, mi
     for idx in range(len(data)):
         row = data[idx]
         
-        # Skip if row is too short
+        # Skip if row is too short. This is to skip any rows with only 1 datapoint. 
         if len(row) < 2:
             row.append('')
             continue
         
-        # Find where numeric data starts (first column with a numeric value)
+        # Find where numeric data starts (first column with a numeric value). This strategy was used to skip over rows that just have labels. 
         data_start_idx = None
         for col_idx, val in enumerate(row):
             if val and val != '' and val != 'Percentage change from earliest to latest':
@@ -488,9 +476,7 @@ def extract_table_data_single(driver, url, geography_method, geography_value, mi
         else:
             data[idx].append('')
     
-    # Align all rows so data starts at the same column
-    # AND align label types (e.g., all "Statistics" labels in the same column)
-    # Find the maximum number of label columns (non-numeric columns at the start)
+    # Align all rows so data starts at the same colum and align label types (e.g., all "Statistics" labels in the same column)
     max_label_columns = 0
     for row in data:
         label_count = 0
@@ -580,7 +566,7 @@ def extract_table_data_single(driver, url, geography_method, geography_value, mi
             is_repeated_geography = True
             logging.info(f"Row {idx}: Repeated geography detected (same geo+violation in full row)")
         
-        if is_repeated_geography:
+        if is_repeated_geography: # Note that this involved a lot of if statements. I know, it might be overkill. I welcome any feedback as to reduce the number of if statements, while also planning for all contingencies.  
             logging.info(f"Row {idx}: Repeated geography - ensuring geography+violation columns are empty")
             # This is a repeated geography - ensure the geography+violation columns are empty
             # Check if first 2 columns are already empty
