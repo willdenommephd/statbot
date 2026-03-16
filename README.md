@@ -47,10 +47,10 @@ The program organizes outputs automatically, creating a dedicated worksheet for 
 Designed to reduce manual data extraction and analysis, StatBot helps automate recurring products and deliverables, freeing up staff time for higher-value tasks.
 
 ## Module 1: Installing StatBot
-To run StatBot, you will have to download and save the Python script for the program to a directory. You can find the statbot.py script in GCDocs at statbot.py.  
+StatBot can be installed via pip install statbot onto your computer, or you can download its zip .tar.gz folder locally and using pip install . (path to StatBot).
 
 ## Module 2: Starting StatBot
-StatBot runs directly in your IDE or Python interpreter’s terminal. By following these steps, you will be able to run StatBot with ease. 
+StatBot runs directly in your IDE or Python interpreter’s terminal. After you install StatBot, you will be able to run it by typing "statbot" in your terminal, no matter the directory. One you start StatBot, you will be prompted with a welcome message. 
 
 ### Welcome message
 
