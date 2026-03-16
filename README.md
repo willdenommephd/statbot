@@ -40,11 +40,11 @@ The following packages are required as dependencies:
 
 ## StatBot: User Manual
 
-StatBot.py is a Python-based program that automates the extraction and processing of StatCan data tables. It searches StatCan URLs, applies one or more user-defined filters, and downloads the resulting tabular data directly into an Excel file.
+StatBot.py is a Python-based program that automates the extraction and processing of openly accessible StatCan data tables from https://www150.statcan.gc.ca/n1/en/type/data?MM=1. It searches StatCan URLs, applies one or more user-defined filters, and downloads the resulting tabular data directly into an Excel file.
 
 The program organizes outputs automatically, creating a dedicated worksheet for each data source and including preloaded statistical analyses to support immediate use. StatBot also allows users to save and reuse filter configurations, apply pre-saved settings, and populate new columns in existing Excel files. It also calculates percentage change between the earliest and latest columns. 
 
-Designed to reduce manual data extraction and analysis, StatBot helps automate recurring products and deliverables, freeing up staff time for higher-value tasks.
+Designed to reduce manual data extraction and analysis, StatBot helps automate recurring products and deliverables.
 
 ## Module 1: Installing StatBot
 StatBot can be installed via pip install statbot onto your computer, or you can download its zip .tar.gz folder locally and using pip install . (path to StatBot).
