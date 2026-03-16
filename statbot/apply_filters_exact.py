@@ -3,7 +3,6 @@ from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 import logging
 
-# Function to apply filters on the webpage using anchor-based positional method. 
 #This can be altered, but based on testing, this is the most reliable way to select filters on StatCan's website.
 def apply_filters_exact(driver,geography_method, geography_value, middle_filters, start_year, end_year, middle_filters_as_column=None):
     """
@@ -29,29 +28,29 @@ def apply_filters_exact(driver,geography_method, geography_value, middle_filters
         
     import time
     try:
-        # Wait for page to fully load
+        # Wait for page to fully load. If you are having problems, you can increase this time. Its effectiveness kind of depends on the server's traffic and your internet connection. 
         time.sleep(5)
         
-        # Select the Geography options if provided (supports multiple selections)
+        # Select the Geography options if provided (supports multiple selections - just separate them with a comma)
         if geography_method and geography_value:
             geography_values = [v.strip() for v in geography_value.split(',')]
             
-            # Click on Geography filter panel to ensure it's open and active
+            # StatBot clicks on Geography filter panel to ensure it's open and active
             try:
                 geo_link = WebDriverWait(driver, 15).until(
-                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Geography') or @id='panel16061-lnk']"))
+                    EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Geography') or @id='panel16061-lnk']")) #based on the HTML code (the identifier for Geography)
                 )
                 driver.execute_script("arguments[0].click();", geo_link)
                 time.sleep(2)
                 logging.info("Opened Geography filter panel")
             except Exception as e:
                 logging.info(f"Could not click Geography panel: {e}")
-            
-            # First, expand the tree to make all options visible
-            # This is crucial because provinces are hidden under Canada by default
+
+            # StatCan data is organized into trees, with parent nodes and child nodes. This part expands the entire tree out to select something. 
+            # First, expand the tree to make all options visible. This will allow the visibility of, say, all provinces under Canada, and all municipalities under provinces. 
             try:
                 for iteration in range(9):  # Expand up to 9 levels
-                    collapsed_nodes = driver.find_elements(By.XPATH, "//div[@id='tree0']//li[contains(@class, 'jstree-closed')]")
+                    collapsed_nodes = driver.find_elements(By.XPATH, "//div[@id='tree0']//li[contains(@class, 'jstree-closed')]") #Took forever to figure this out. 
                     if not collapsed_nodes:
                         break  # Stop if no more nodes to expand
                     logging.info(f"Expanding geography tree level {iteration + 1}, found {len(collapsed_nodes)} collapsed nodes")
@@ -62,15 +61,15 @@ def apply_filters_exact(driver,geography_method, geography_value, middle_filters
                             time.sleep(0.1)
                         except:
                             pass
-                    time.sleep(1)  # Wait for page to update after each level
+                    time.sleep(1)  # Wait for page to update after each level. I find this helped me really track what was happening during Selenium's processing. 
                 logging.info("Expanded Geography tree nodes")
                 time.sleep(2)  # Wait for final stabilization
             except Exception as e:
                 logging.warning(f"Could not expand Geography tree: {e}")
             
-            # First, deselect all default selected geography items
+            # Every StatCan page has numerous filters selected by default. This removes all defaults and creates a blank slate for StatBot. 
             try:
-                # Helper to ensure a given li is unselected with retries
+                # Helper to ensure a given li is unselected with retries. Sometimes the list would reselect, so I added this to ensure the blank slate is given. Future generations may not need this. 
                 def ensure_geo_unselected(li_elem, max_tries=3):
                     tries = 0
                     while tries < max_tries:
@@ -101,7 +100,7 @@ def apply_filters_exact(driver,geography_method, geography_value, middle_filters
                     logging.info(f"Deselected {deselected_count} geography items")
                     time.sleep(1)
                     
-                    # Verify and retry if needed
+                    # Verify and retry if needed. Again, this is purely due to troubleshooting issues, and might be overkill. 
                     still_selected = driver.find_elements(By.XPATH, "//div[@id='tree0']//li[@aria-selected='true']")
                     if still_selected:
                         logging.warning(f"WARNING: {len(still_selected)} geography items still selected after first pass")
@@ -117,7 +116,7 @@ def apply_filters_exact(driver,geography_method, geography_value, middle_filters
             except Exception as e:
                 logging.warning(f"Could not deselect default geography: {e}")
             
-            # Now select the geography options
+            # Now select the geography options specified in the UI. 
             for geo_val in geography_values:
                 try:
                     logging.info(f"Searching for geography: '{geo_val}'")
@@ -127,10 +126,10 @@ def apply_filters_exact(driver,geography_method, geography_value, middle_filters
                         # Search anchor text containing the keyword (case-insensitive)
                         xpath_query = f"//div[@id='tree0']//a[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '{geo_val.lower()}')]"
                     elif geography_method == 'bracket_number':
-                        # Search anchor text for [35] format
+                        # Search anchor text for a number surrounded by square brackets (e.g., [35]). This is a pretty handy feature StatCan includes with its nodes. 
                         xpath_query = f"//div[@id='tree0']//a[contains(text(), '[{geo_val}]')]"
                     elif geography_method == 'level' or geography_method == 'level_all':
-                        # Find parent by keyword, then select all children
+                        # Find parent by keyword, then select all children. Level selects all children, level_all selects all children and the parent. 
                         xpath_query = f"//div[@id='tree0']//a[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '{geo_val.lower()}')]"
                     
                     # Try to find all matching anchor elements
@@ -162,7 +161,7 @@ def apply_filters_exact(driver,geography_method, geography_value, middle_filters
                         except Exception as e:
                             logging.debug(f"Could not expand parent (may already be expanded): {e}")
                         
-                        # Handle pagination/lazy loading: Click "show more" buttons to load all children
+                        # Handle pagination/lazy loading: Click "show more" buttons to load all children. The "show more" button is an arrow. 
                         # First, try scrolling to trigger lazy loading
                         try:
                             child_ul = geo_li.find_element(By.XPATH, './ul')
@@ -185,7 +184,7 @@ def apply_filters_exact(driver,geography_method, geography_value, middle_filters
                             logging.debug(f"Could not trigger lazy loading via scroll: {e}")
                         
                         # Now try clicking pagination buttons
-                        max_pagination_clicks = 20  # Prevent infinite loops
+                        max_pagination_clicks = 20  # Prevent infinite loops. Otherwise, StatBot will search forever. 
                         pagination_clicks = 0
                         while pagination_clicks < max_pagination_clicks:
                             try:
@@ -233,23 +232,7 @@ def apply_filters_exact(driver,geography_method, geography_value, middle_filters
                                 else:
                                     logging.info("No pagination button found - may use lazy loading instead")
                                 break
-                        
-                        # Debug: Print the HTML structure of this li element
-                        try:
-                            html_snippet = geo_li.get_attribute('outerHTML')
-                            # Print first 2000 chars to see structure including children
-                            logging.info(f"HTML structure (first 2000 chars): {html_snippet[:2000]}")
-                            
-                            # Also try to get the child ul directly
-                            try:
-                                child_ul = geo_li.find_element(By.XPATH, './ul')
-                                ul_html = child_ul.get_attribute('outerHTML')
-                                logging.info(f"Child UL HTML (first 1000 chars): {ul_html[:1000]}")
-                            except Exception as e:
-                                logging.info(f"Could not get child UL HTML: {e}")
-                        except:
-                            pass
-                        
+                                              
                         # If level_all, first select the parent node itself
                         if geography_method == 'level_all':
                             anchor_class = geo_anchor.get_attribute('class') or ''
@@ -333,7 +316,7 @@ def apply_filters_exact(driver,geography_method, geography_value, middle_filters
                 except Exception as e:
                     logging.warning(f"Could not select geography '{geo_val}': {e}")
         
-        # Process middle filters dynamically (filters between Geography and Reference Period)
+        # Process middle filters dynamically (filters between Geography and Reference Period). You can have as many as you'd like!
         for idx, filter_config in enumerate(middle_filters, 1):
             filter_name = filter_config['name']
             filter_method = filter_config['method']
@@ -450,7 +433,6 @@ def apply_filters_exact(driver,geography_method, geography_value, middle_filters
                     
                     if not matching_anchors:
                         logging.warning(f"No {filter_name} found matching '{item_val}'")
-                        # Debug: show some examples
                         all_items = driver.find_elements(By.XPATH, f"//div[@id='{tree_id}']//li[@role='treeitem']")
                         logging.warning(f"Showing 10 sample {filter_name} labels:")
                         for i, item in enumerate(all_items[:10]):
