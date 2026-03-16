@@ -1,9 +1,6 @@
 import logging
 import re
 
-
-#This will be altered to also include rows. 
-# Helper function to add percentage change column to data
 def add_percentage_column(data_rows):
     """
     Add a percentage change column to CSV data.
@@ -16,13 +13,8 @@ def add_percentage_column(data_rows):
         Modified data_rows with percentage column added
     """
     if not data_rows or len(data_rows) < 2:
-        return data_rows
-    
-    # Debug: Log first few rows to see CSV structure
-    logging.info(f"CSV has {len(data_rows)} total rows")
-    for i in range(min(3, len(data_rows))):
-        logging.info(f"CSV Row {i}: {data_rows[i][:10]}")  # First 10 cells
-    
+        return data_rows 
+  
     # Find the year header row (contains year values like "2021", "2022", etc.)
     year_header_row_idx = None
     year_col_start = None
@@ -65,7 +57,7 @@ def add_percentage_column(data_rows):
             cell_value = row[col_idx] if col_idx < len(row) else ''
             if cell_value and str(cell_value).strip():
                 try:
-                    # Clean value: remove commas, spaces, percent signs
+                    # Clean value: remove commas, spaces, percent signs. This was added due to the variability in how StatCan formats their data. Some troubleshooting showed that this was the most prudent strategy. 
                     clean_val = str(cell_value).replace(',', '').replace(' ', '').replace('%', '')
                     num_val = float(clean_val)
                     if first_value is None:
@@ -76,7 +68,7 @@ def add_percentage_column(data_rows):
         
         # Calculate percentage change
         if first_value is not None and last_value is not None and first_value != 0:
-            pct_change = ((last_value - first_value) / first_value) * 100
+            pct_change = ((last_value - first_value) / first_value) * 100 #Basically just an Excel function. 
             row.append(f"{pct_change:.2f}%")
         else:
             row.append('')
