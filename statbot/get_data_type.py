@@ -1,5 +1,7 @@
 import logging
 
+#Debating deleting this. 
+
 def get_data_type():
     data_type = input("Enter data type to extract (text/tables): ").strip().lower()
     while data_type not in ['text', 'tables']:
