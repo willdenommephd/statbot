@@ -2,6 +2,7 @@ import os
 import platform
 import logging
 
+#For most cases, this will have very little impact. But if you have some security or permission issues, this will allow you to select a different driver that your Python terminal, or StatBot, can access. 
 
 def find_chromedriver():
     """
