@@ -4,7 +4,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import logging
 
-# Helper function to get all child geography names under a parent geography
 def get_child_geographies(driver, parent_geography_name):
     """
     Navigate to the geography filter and extract all child geography names under the parent.
