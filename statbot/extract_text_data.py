@@ -8,7 +8,7 @@ from .apply_filters_exact import apply_filters_exact
 from .ensure_filter_page import ensure_filter_page
 
 def extract_text_data(driver, url, geography_method, geography_value, middle_filters, start_year, end_year, middle_filters_as_column=None):
-        """
+    """
     Extract paragraph text from a target page after optionally applying geography and time filters.
 
     This is a thin wrapper around `extract_text_data_single()` that logs the operation and
@@ -47,7 +47,7 @@ def extract_text_data(driver, url, geography_method, geography_value, middle_fil
 
 # Helper function to extract text data for a single geography
 def extract_text_data_single(driver, url, geography_method, geography_value, middle_filters, start_year, end_year, middle_filters_as_column=None):
-     """
+    """
     Load a page (if needed), optionally apply filters, then scrape and return all paragraph text.
 
     The function:

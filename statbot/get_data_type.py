@@ -3,7 +3,7 @@ import logging
 #Debating deleting this. 
 
 def get_data_type():
-       """
+    """
     Prompt the user to choose a data type to extract and validate the input.
 
     This function repeatedly prompts the user (via `input()`) to enter a data

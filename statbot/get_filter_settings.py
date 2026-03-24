@@ -2,7 +2,7 @@ import sys
 import logging
 
 def get_filter_settings(update_mode=False):
-        """
+    """
     Prompt the user to choose a data extraction type and validate the input.
 
     This function interactively asks the user to enter a data type to extract

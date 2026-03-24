@@ -1,7 +1,7 @@
 import logging
 
 def get_reference_period():
-   """
+    """
     Prompt the user to enter a start and end year for a reference period.
 
     This function reads two values from standard input (start year and end year),

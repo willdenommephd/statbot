@@ -1,7 +1,7 @@
 import logging
 
 def add_data_to_sheet(sheet, data, table_title, middle_filters_as_column=None):
-     """
+    """
     Append a titled table of rows to a sheet.
 
     This function mutates `sheet` by appending:

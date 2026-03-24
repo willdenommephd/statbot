@@ -12,7 +12,7 @@ from .find_chromedriver import find_chromedriver
 from selenium.webdriver.support.ui import WebDriverWait
 
 def statbotsearch(driver, search_term, file_path="output_links.txt", existing_driver=None):
-        """
+    """
     Search Statistics Canada (StatCan) data tables and save discovered table links to a text file.
 
     This function uses Selenium to open StatCan's Data page, submit a keyword search, switch to
